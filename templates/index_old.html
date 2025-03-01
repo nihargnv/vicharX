@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI File Manager</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+        }
+        h2 {
+            color: #333;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        input[type="file"] {
+            padding: 5px;
+        }
+        button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        li {
+            background: #f4f4f4;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+        }
+        a {
+            text-decoration: none;
+            color: #007bff;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Upload a File</h2>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="file" name="file" required>
+        <button type="submit">Upload</button>
+    </form>
+
+    {% if message %}
+        <p style="color: green;"><strong>{{ message }}</strong></p>
+    {% endif %}
+
+    <h2>Uploaded Files</h2>
+    <ul>
+        {% for doc in documents %}
+            <li>
+                <strong>{{ doc.file.name }}</strong> - <a href="{{ doc.file.url }}" target="_blank">View</a><br>
+                <strong>Category:</strong> {{ doc.category }} <br>
+                <strong>Summary:</strong> {{ doc.summary }} <br>
+                <strong>Metadata:</strong> {{ doc.metadata }}
+            </li>
+        {% endfor %}
+    </ul>
+
+</body>
+</html>
+
+
+
+
+
+
+
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document Dashboard</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+
+    <div class="dashboard">
+        <h1>Document Dashboard</h1>
+        <div class="stats">
+            <span>Total Documents: <span id="total-documents">{{ documents|length }}</span></span>
+            <span>Total Categories: <span id="total-categories">{{ documents|dictsort:"category"|length }}</span></span>
+            <span>Storage Used: <span id="storage-used">
+            </span></span>
+        </div>
+
+        <div class="documents-container">
+            {% for doc in documents %}
+            <div class="document-tile" data-id="{{ doc.id }}">
+                <div class="document-preview">
+                    <img src="{{ doc.file.url|default:'/static/images/placeholder.svg' }}" alt="{{ doc.file.name }}">
+                </div>
+                <div class="document-info">
+                    <h3 class="document-name">{{ doc.file.name }}</h3>
+                    <span class="document-category {{ doc.category }}">{{ doc.category }}</span>
+                    <div class="document-tags">
+                        {{ doc.category }}
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+                <p>No documents available.</p>
+            {% endfor %}
+        </div>
+    </div>
+
+</body>
+</html>
+

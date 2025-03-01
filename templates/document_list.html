@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Docs Manager</title>
+</head>
+<body>
+    <ul>
+        {% for doc in documents %}
+            <li>
+                {{ doc.title }} - <a href="{{ doc.file.url }}" target="_blank">Download</a>
+            </li>
+        {% endfor %}
+    </ul>    
+</body>
+</html>

@@ -1,0 +1,410 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Upload - Document Management</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      /* General Styles */
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f5f5f5;
+      }
+
+      /* Header Styles */
+      .dashboard-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #ffffff;
+        padding: 10px 20px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+
+      .header-left {
+        display: flex;
+        align-items: center;
+      }
+
+      .header-right {
+        display: flex;
+        align-items: center;
+      }
+
+      .search-bar {
+        margin-right: 20px;
+        display: flex;
+      }
+
+      .search-bar input {
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px 0 0 4px;
+        width: 200px;
+      }
+
+      .search-bar button {
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 0 4px 4px 0;
+        padding: 8px 12px;
+        cursor: pointer;
+      }
+
+      .user-profile {
+        display: flex;
+        align-items: center;
+        position: relative;
+      }
+
+      .profile-image {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        margin-right: 10px;
+      }
+
+      .username {
+        cursor: pointer;
+      }
+
+      .sidebar-toggle {
+        background: none;
+        border: none;
+        font-size: 20px;
+        margin-right: 15px;
+        cursor: pointer;
+      }
+
+      /* Dropdown Styles */
+      .dropdown {
+        position: relative;
+        display: inline-block;
+      }
+
+      .dropdown-content {
+        display: none;
+        position: absolute;
+        right: 0;
+        background-color: #f9f9f9;
+        min-width: 160px;
+        box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        z-index: 1;
+        border-radius: 4px;
+      }
+
+      .dropdown:hover .dropdown-content {
+        display: block;
+      }
+
+      .dropdown-content a {
+        color: black;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+      }
+
+      .dropdown-content a:hover {
+        background-color: #f1f1f1;
+      }
+
+      /* Dashboard Layout */
+      .dashboard-container {
+        display: flex;
+        height: calc(100vh - 60px);
+      }
+
+      /* Sidebar Styles - Updated to white */
+      .sidebar {
+        width: 250px;
+        background-color: #ffffff;
+        color: #333;
+        transition: width 0.3s ease;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      }
+
+      .sidebar-nav ul {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+      }
+
+      .nav-item {
+        border-bottom: 1px solid #eee;
+      }
+
+      .nav-item a {
+        display: flex;
+        align-items: center;
+        color: #555;
+        text-decoration: none;
+        padding: 15px 20px;
+        transition: background-color 0.3s, color 0.3s;
+      }
+
+      .nav-item a i {
+        margin-right: 10px;
+        width: 20px;
+        text-align: center;
+      }
+
+      .nav-item:hover a {
+        background-color: #f5f5f5;
+        color: #333;
+      }
+
+      .nav-item.active a {
+        background-color: #4CAF50;
+        color: white;
+      }
+
+      /* Main Content Styles */
+      .main-content {
+        flex-grow: 1;
+        padding: 20px;
+        overflow-y: auto;
+      }
+
+      /* Upload Specific Styles */
+      .upload-container {
+        background-color: white;
+        border-radius: 8px;
+        padding: 30px;
+        max-width: 600px;
+        margin: 20px auto;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      }
+
+      .upload-area {
+        border: 2px dashed #ccc;
+        padding: 30px;
+        text-align: center;
+        border-radius: 5px;
+        margin-bottom: 20px;
+        cursor: pointer;
+        transition: background-color 0.3s, border-color 0.3s;
+      }
+
+      .upload-area:hover {
+        background-color: #f9f9f9;
+        border-color: #4CAF50;
+      }
+
+      .upload-icon {
+        font-size: 48px;
+        color: #4CAF50;
+        margin-bottom: 15px;
+      }
+
+      .upload-area h3 {
+        margin: 10px 0;
+        color: #555;
+      }
+
+      input[type="file"] {
+        margin-top: 15px;
+      }
+
+      .btn {
+        display: inline-block;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: background-color 0.3s;
+      }
+
+      .btn-primary {
+        background-color: #4CAF50;
+        color: white;
+        width: 100%;
+      }
+
+      .btn-primary:hover {
+        background-color: #45a049;
+      }
+
+      .spinner {
+        display: none;
+        margin: 15px auto;
+        width: 40px;
+        height: 40px;
+        border: 4px solid rgba(0, 0, 0, 0.1);
+        border-radius: 50%;
+        border-top: 4px solid #3498db;
+        animation: spin 1s linear infinite;
+      }
+      
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+      
+      .upload-status {
+        text-align: center;
+        margin-top: 10px;
+        font-weight: bold;
+        color: #555;
+      }
+      
+      .btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+    </style>
+  </head>
+  <body class="dashboard-page">
+    <header class="dashboard-header">
+      <div class="header-left">
+        <button id="sidebar-toggle" class="sidebar-toggle">
+          <i class="fas fa-bars"></i>
+        </button>
+        <h1>Upload - VicharX</h1>
+      </div>
+      <div class="header-right">
+        <div class="user-profile">
+          <img
+            src="{% static '/public/profile_img.png' %}"
+            alt="User Profile"
+            class="profile-image"
+          />
+          <div class="dropdown">
+            <span class="username">John Doe</span>
+            <div class="dropdown-content">
+              <a href="#"><i class="fas fa-user"></i> Profile</a>
+              <a href="#"><i class="fas fa-cog"></i> Settings</a>
+              <a href="login.html"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="dashboard-container">
+      <aside class="sidebar">
+        <nav class="sidebar-nav">
+          <ul>
+            <li class="nav-item" data-section="documents">
+              <a href="/">
+                <i class="fas fa-file-alt"></i> <span>Documents</span>
+              </a>
+            </li>
+            <li class="nav-item active" data-section="upload">
+              <a href="/upload">
+                <i class="fas fa-upload"></i> <span>Upload</span>
+              </a>
+            </li>
+            <li class="nav-item" data-section="analytics">
+              <a href="/analytics">
+                <i class="fas fa-chart-pie"></i> <span>Analytics</span>
+              </a>
+            </li>
+            <li class="nav-item" data-section="settings">
+              <a href="/search">
+                <i class="fas fa-search"></i> <span>Search</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </aside>
+
+      <main class="main-content">
+        <div class="upload-container">
+          <form
+            id="upload-form"
+            action="{% url 'upload_document' %}"
+            method="post"
+            enctype="multipart/form-data"
+          >
+            {% csrf_token %}
+            <div class="upload-area">
+              <div class="upload-icon">
+                <i class="fas fa-cloud-upload-alt"></i>
+              </div>
+              <h3>Choose a file to upload</h3>
+              <input type="file" id="file-input" name="file" required />
+            </div>
+            <button type="submit" id="upload-button" class="btn btn-primary">Upload</button>
+            
+            <!-- Loading spinner -->
+            <div id="loading-spinner" class="spinner"></div>
+            
+            <p id="upload-status" class="upload-status"></p>
+          </form>
+        </div>
+      </main>
+    </div>
+
+    <script>
+      // Toggle sidebar functionality
+      document.getElementById("sidebar-toggle").addEventListener("click", function() {
+        document.querySelector(".sidebar").classList.toggle("collapsed");
+      });
+      
+      // Form submission with loading spinner
+      document
+        .getElementById("upload-form")
+        .addEventListener("submit", function (event) {
+          event.preventDefault();
+
+          let formData = new FormData();
+          let fileInput = document.getElementById("file-input");
+          const uploadButton = document.getElementById("upload-button");
+          const spinner = document.getElementById("loading-spinner");
+          const statusText = document.getElementById("upload-status");
+          
+          if (!fileInput.files.length) {
+            alert("Please select a file.");
+            return;
+          }
+
+          // Show loading spinner, disable button and update status
+          spinner.style.display = "block";
+          uploadButton.disabled = true;
+          statusText.textContent = "Uploading file...";
+          
+          formData.append("file", fileInput.files[0]);
+
+          fetch("{% url 'upload_document' %}", {
+            method: "POST",
+            body: formData,
+            headers: {
+              "X-CSRFToken": document.querySelector(
+                "[name=csrfmiddlewaretoken]"
+              ).value,
+            },
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              // Hide spinner
+              spinner.style.display = "none";
+              statusText.textContent = data.message;
+              
+              // Show alert and redirect
+              alert(data.message);
+              window.location.href = "{% url 'show_docs' %}";
+            })
+            .catch((error) => {
+              console.error("Error:", error);
+              // Reset UI on error
+              spinner.style.display = "none";
+              uploadButton.disabled = false;
+              statusText.textContent = "Upload failed. Please try again.";
+            });
+        });
+    </script>
+  </body>
+</html>

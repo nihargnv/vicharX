@@ -1,0 +1,118 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document Analytics</title>
+  <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    .analytics-container {
+      max-width: 800px;
+      margin: auto;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .stats {
+      display: flex;
+      justify-content: space-between;
+      margin: 20px 0;
+    }
+
+    .stat-card {
+      background: white;
+      padding: 10px;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .stat-card h3 {
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body class="dashboard-page">
+  <header class="dashboard-header">
+    <div class="header-left">
+      <button id="sidebar-toggle" class="sidebar-toggle">
+        <i class="fas fa-bars"></i>
+      </button>
+      <h1>Analytics - VicharX</h1>
+    </div>
+  </header>
+
+  <div class="dashboard-container">
+    <aside class="sidebar">
+      <nav class="sidebar-nav">
+        <ul>
+          <li class="nav-item" data-section="documents">
+            <a href="/"><i class="fas fa-file-alt"></i> <span>Documents</span></a>
+          </li>
+          <li class="nav-item" data-section="upload">
+            <a href="/upload"><i class="fas fa-upload"></i> <span>Upload</span></a>
+          </li>
+          <li class="nav-item active" data-section="analytics">
+            <a href="/analytics"><i class="fas fa-chart-pie"></i> <span>Analytics</span></a>
+          </li>
+          <li class="nav-item" data-section="search">
+            <a href="/search"><i class="fas fa-search"></i> <span>Search</span></a>
+          </li>
+        </ul>
+      </nav>
+    </aside>
+
+    <main class="main-content">
+      <div class="analytics-container">
+        <h2>Document Insights</h2>
+        <div class="stats">
+          <div class="stat-card">
+            <h3>Total Documents</h3>
+            <p>{{ total_documents }}</p>
+          </div>
+          <div class="stat-card">
+            <h3>Categories</h3>
+            <ul>
+              {% for item in category_distribution %}
+                <li>{{ item.category }}: {{ item.count }}</li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+        <canvas id="categoryChart"></canvas>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const ctx = document.getElementById("categoryChart").getContext("2d");
+      const categories = [{% for item in category_distribution %}"{{ item.category }}",{% endfor %}];
+      const counts = [{% for item in category_distribution %}{{ item.count }},{% endfor %}];
+
+      new Chart(ctx, {
+        type: "bar",
+        data: {
+          labels: categories,
+          datasets: [
+            {
+              label: "Documents per Category",
+              data: counts,
+              backgroundColor: "rgba(54, 162, 235, 0.6)",
+              borderColor: "rgba(54, 162, 235, 1)",
+              borderWidth: 1,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          scales: {
+            y: { beginAtZero: true },
+          },
+        },
+      });
+    });
+  </script>
+</body>
+</html>

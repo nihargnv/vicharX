@@ -1,0 +1,381 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document Details - Document Management System</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      /* General Styles */
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f5f5f5;
+        margin: 0;
+        padding: 0;
+      }
+
+      /* Details Page Specific Styles */
+      .details-container {
+        max-width: 1200px;
+        margin: 20px auto;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+      }
+
+      .details-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 20px;
+        background-color: #f4f4f4;
+        border-bottom: 1px solid #ddd;
+      }
+
+      .back-button {
+        background: none;
+        border: none;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        cursor: pointer;
+        font-size: 14px;
+        color: #555;
+      }
+
+      .details-content {
+        display: grid;
+        grid-template-columns: 300px 1fr;
+        min-height: 500px;
+      }
+
+      .document-sidebar {
+        padding: 20px;
+        border-right: 1px solid #eee;
+        background-color: #fafafa;
+      }
+
+      .document-preview-container {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+
+      .document-preview-container img {
+        max-width: 100%;
+        height: auto;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 5px;
+        background: white;
+      }
+
+      .document-main {
+        padding: 20px;
+      }
+
+      .metadata-section {
+        margin-bottom: 25px;
+      }
+
+      .metadata-section h3 {
+        margin-top: 0;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 8px;
+        color: #333;
+      }
+
+      .metadata-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+      }
+
+      .metadata-item {
+        margin-bottom: 15px;
+      }
+
+      .metadata-label {
+        font-weight: bold;
+        color: #666;
+        margin-bottom: 5px;
+        font-size: 14px;
+      }
+
+      .metadata-value {
+        font-size: 16px;
+      }
+
+      .tag {
+        display: inline-block;
+        background-color: #e1f5fe;
+        color: #0288d1;
+        padding: 3px 8px;
+        border-radius: 4px;
+        margin-right: 5px;
+        margin-bottom: 5px;
+        font-size: 12px;
+      }
+
+      .extracted-text {
+        background-color: #f9f9f9;
+        padding: 15px;
+        border-radius: 4px;
+        border: 1px solid #eee;
+        max-height: 300px;
+        overflow-y: auto;
+      }
+
+      .action-buttons {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+      }
+
+      .btn {
+        padding: 8px 16px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: background-color 0.3s;
+      }
+
+      .btn-primary {
+        background-color: #4caf50;
+        color: white;
+      }
+
+      .btn-secondary {
+        background-color: #2196f3;
+        color: white;
+      }
+
+      .btn-danger {
+        background-color: #f44336;
+        color: white;
+      }
+
+      .btn:hover {
+        opacity: 0.9;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="dashboard-header">
+      <div class="header-left">
+        <button id="sidebar-toggle" class="sidebar-toggle">
+          <i class="fas fa-bars"></i>
+        </button>
+        <h1>Document Management</h1>
+      </div>
+      <div class="header-right">
+        <div class="user-profile">
+          <img
+            src="{% static '/public/profile_img.png' %}"
+            alt="User Profile"
+            class="profile-image"
+          />
+          <div class="dropdown">
+            <span class="username">John Doe</span>
+            <div class="dropdown-content">
+              <a href="#"><i class="fas fa-user"></i> Profile</a>
+              <a href="#"><i class="fas fa-cog"></i> Settings</a>
+              <a href="login.html"
+                ><i class="fas fa-sign-out-alt"></i> Logout</a
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="dashboard-container">
+      <aside class="sidebar">
+        <nav class="sidebar-nav">
+          <ul>
+            <li class="nav-item active" data-section="documents">
+              <a href="{% url 'show_docs' %}">
+                <i class="fas fa-file-alt"></i> <span>Documents</span>
+              </a>
+            </li>
+            <li class="nav-item" data-section="upload">
+              <a href="{% url 'upload_document' %}">
+                <i class="fas fa-upload"></i> <span>Upload</span>
+              </a>
+            </li>
+            <li class="nav-item" data-section="analytics">
+              <a href="/analytics">
+                <i class="fas fa-chart-pie"></i> <span>Analytics</span>
+              </a>
+            </li>
+            <li class="nav-item" data-section="settings">
+              <a href="/search"><i class="fas fa-search"></i> <span>Search</span></a>
+            </li>
+          </ul>
+        </nav>
+      </aside>
+
+      <main class="main-content">
+        <div class="details-container">
+          <div class="details-header">
+            <a href="{% url 'show_docs' %}" class="back-button">
+              <i class="fas fa-arrow-left"></i> Back to Documents
+            </a>
+            <h2>Document Details</h2>
+          </div>
+
+          <div class="details-content">
+            <div class="document-sidebar">
+              <div class="document-preview-container">
+                <img
+                  src="{% static '/public/images.png' %}"
+                  alt="{{ document.file.name }}"
+                />
+              </div>
+
+              <div class="action-buttons">
+                <a
+                  href="{{ document.file.url }}"
+                  class="btn btn-primary"
+                  download
+                >
+                  <i class="fas fa-download"></i> Download
+                </a>
+                <button class="btn btn-secondary">
+                  <i class="fas fa-share"></i> Share
+                </button>
+                <button
+                  class="btn btn-danger"
+                  onclick="confirmDelete({{ document.id }})"
+                >
+                  <i class="fas fa-trash"></i> Delete
+                </button>
+              </div>
+            </div>
+
+            <div class="document-main">
+              <div class="metadata-section">
+                <h3>Document Information</h3>
+                <div class="metadata-grid">
+                  <div class="metadata-item">
+                    <div class="metadata-label">Filename</div>
+                    <div class="metadata-value">
+                      {{ document.metadata.Name }}
+                    </div>
+                  </div>
+
+                  <div class="metadata-item">
+                    <div class="metadata-label">Category</div>
+                    <div class="metadata-value">{{ document.category }}</div>
+                  </div>
+
+                  <div class="metadata-item">
+                    <div class="metadata-label">Uploaded On</div>
+                    <div class="metadata-value">
+                      {{ document.metadata.Created }}
+                    </div>
+                  </div>
+
+                  <div class="metadata-item">
+                    <div class="metadata-label">File Size</div>
+                    <div class="metadata-value">
+                      {{ document.metadata.Size }}
+                    </div>
+                  </div>
+
+                  <div class="metadata-item">
+                    <div class="metadata-label">File Type</div>
+                    <div class="metadata-value">
+                      {{ document.metadata.Type }}
+                    </div>
+                    <br />
+                  </div>
+
+                  <div class="metadata-item">
+                    <div class="metadata-label">Last Modified</div>
+                    <div class="metadata-value">
+                      {{ document.metadata.Modified }}
+                    </div>
+                    <br />
+                  </div>
+                </div>
+              </div>
+              <br />
+              
+              <div class="metadata-section">
+                <h3>AI-Generated Tags</h3>
+                <br />
+                <div class="tags-container">
+                  <span class="tag" style="font-size: large"
+                    >{{ document.category }}</span
+                  >
+                </div>
+              </div>
+
+              <div class="metadata-section">
+                <h3>Document Summary</h3>
+                <p>
+                  {% if document.summary %} {{ document.summary }} {% else %} No
+                  summary available for this document. {% endif %}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script>
+      function confirmDelete(documentId) {
+        if (!documentId) {
+          alert("Error: Document ID is missing.");
+          return;
+        }
+
+        if (
+          confirm(
+            "Are you sure you want to delete this document? This action cannot be undone."
+          )
+        ) {
+          fetch(`/document/${documentId}/delete/`, {
+            method: "DELETE",
+            headers: {
+              "X-CSRFToken": getCSRFToken(),
+            },
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              if (data.message) {
+                alert("Document deleted successfully.");
+                window.location.href = "/"; // ✅ Redirect to home page
+              } else if (data.error) {
+                alert("Error: " + data.error);
+              }
+            })
+            .catch((error) => {
+              alert("An error occurred: " + error);
+            });
+        }
+      }
+      // Function to get CSRF token from cookies (for Django)
+      function getCSRFToken() {
+        let cookieValue = null;
+        let cookies = document.cookie.split(";");
+        for (let i = 0; i < cookies.length; i++) {
+          let cookie = cookies[i].trim();
+          if (cookie.startsWith("csrftoken=")) {
+            cookieValue = cookie.substring("csrftoken=".length);
+            break;
+          }
+        }
+        return cookieValue;
+      }
+    </script>
+  </body>
+</html>

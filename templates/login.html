@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Document Management System</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="dashboard-page">
+    <header class="dashboard-header">
+        <div class="header-left">
+            <button id="sidebar-toggle" class="sidebar-toggle">
+                <i class="fas fa-bars"></i>
+            </button>
+            <h1>Document Management</h1>
+        </div>
+        <div class="header-right">
+            <div class="search-bar">
+                <input type="text" placeholder="Search documents...">
+                <button><i class="fas fa-search"></i></button>
+            </div>
+            <div class="user-profile">
+                <img src="/placeholder.svg?height=40&width=40" alt="User Profile" class="profile-image">
+                <div class="dropdown">
+                    <span class="username">John Doe</span>
+                    <div class="dropdown-content">
+                        <a href="#"><i class="fas fa-user"></i> Profile</a>
+                        <a href="#"><i class="fas fa-cog"></i> Settings</a>
+                        <a href="login.html"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <nav class="sidebar-nav">
+                <ul>
+                    <li class="nav-item active" data-section="documents">
+                        <a href="#"><i class="fas fa-file-alt"></i> <span>Documents</span></a>
+                    </li>
+                    <li class="nav-item" data-section="upload">
+                        <a href="#"><i class="fas fa-upload"></i> <span>Upload</span></a>
+                    </li>
+                    <li class="nav-item" data-section="analytics">
+                        <a href="#"><i class="fas fa-chart-pie"></i> <span>Analytics</span></a>
+                    </li>
+                    <li class="nav-item" data-section="settings">
+                        <a href="#"><i class="fas fa-cog"></i> <span>Settings</span></a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <!-- Documents Section -->
+            <section id="documents" class="content-section active">
+                <div class="section-header">
+                    <h2>My Documents</h2>
+                    <div class="view-options">
+                        <button class="view-btn active" data-view="grid"><i class="fas fa-th"></i></button>
+                        <button class="view-btn" data-view="list"><i class="fas fa-list"></i></button>
+                    </div>
+                </div>
+                <div class="documents-container grid-view">
+                    <!-- Document tiles will be dynamically added here -->
+                </div>
+            </section>
+
+            <!-- Upload Section -->
+            <section id="upload" class="content-section">
+                <div class="section-header">
+                    <h2>Upload Documents</h2>
+                </div>
+                <div class="upload-container">
+                    <div class="upload-area" id="drop-area">
+                        <div class="upload-icon">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                        </div>
+                        <h3>Drag & Drop Files Here</h3>
+                        <p>or</p>
+                        <label for="file-input" class="btn btn-primary">Browse Files</label>
+                        <input type="file" id="file-input" multiple hidden>
+                    </div>
+                    <div class="upload-list">
+                        <h3>Upload Queue</h3>
+                        <ul id="upload-queue">
+                            <!-- Upload items will be added here -->
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Analytics Section -->
+            <section id="analytics" class="content-section">
+                <div class="section-header">
+                    <h2>Document Analytics</h2>
+                </div>
+                <div class="analytics-container">
+                    <div class="chart-container">
+                        <canvas id="document-types-chart"></canvas>
+                    </div>
+                    <div class="stats-container">
+                        <div class="stat-card">
+                            <h3>Total Documents</h3>
+                            <p class="stat-value" id="total-documents">0</p>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Categories</h3>
+                            <p class="stat-value" id="total-categories">0</p>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Storage Used</h3>
+                            <p class="stat-value" id="storage-used">0 MB</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Settings Section -->
+            <section id="settings" class="content-section">
+                <div class="section-header">
+                    <h2>Settings</h2>
+                </div>
+                <div class="settings-container">
+                    <div class="settings-group">
+                        <h3>Account Settings</h3>
+                        <div class="setting-item">
+                            <label for="display-name">Display Name</label>
+                            <input type="text" id="display-name" value="John Doe">
+                        </div>
+                        <div class="setting-item">
+                            <label for="email-address">Email Address</label>
+                            <input type="email" id="email-address" value="john.doe@example.com">
+                        </div>
+                        <button class="btn btn-primary">Save Changes</button>
+                    </div>
+                    <div class="settings-group">
+                        <h3>Notification Settings</h3>
+                        <div class="setting-item checkbox">
+                            <input type="checkbox" id="email-notifications" checked>
+                            <label for="email-notifications">Email Notifications</label>
+                        </div>
+                        <div class="setting-item checkbox">
+                            <input type="checkbox" id="document-alerts" checked>
+                            <label for="document-alerts">Document Processing Alerts</label>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Metadata Panel (Hidden by default) -->
+        <aside class="metadata-panel" id="metadata-panel">
+            <div class="metadata-header">
+                <h3>Document Details</h3>
+                <button class="close-btn" id="close-metadata"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="metadata-content">
+                <div class="document-preview">
+                    <img src="/placeholder.svg?height=200&width=150" alt="Document Preview" id="document-preview">
+                </div>
+                <div class="metadata-info">
+                    <h4 id="document-name">Document Name</h4>
+                    <p class="document-category" id="document-category">Category: <span>Invoice</span></p>
+                    <div class="metadata-field">
+                        <label>Uploaded On</label>
+                        <p id="upload-date">March 1, 2025</p>
+                    </div>
+                    <div class="metadata-field">
+                        <label>File Size</label>
+                        <p id="file-size">1.2 MB</p>
+                    </div>
+                    <div class="metadata-field">
+                        <label>AI-Generated Tags</label>
+                        <div class="tags-container" id="ai-tags">
+                            <span class="tag">invoice</span>
+                            <span class="tag">finance</span>
+                            <span class="tag">2025</span>
+                        </div>
+                    </div>
+                    <div class="metadata-field">
+                        <label>Extracted Text</label>
+                        <div class="extracted-text" id="extracted-text">
+                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam auctor, nisl eget ultricies tincidunt, nisl nisl aliquam nisl, eget ultricies nisl nisl eget nisl.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="metadata-actions">
+                    <button class="btn btn-secondary"><i class="fas fa-download"></i> Download</button>
+                    <button class="btn btn-secondary"><i class="fas fa-share"></i> Share</button>
+                    <button class="btn btn-danger"><i class="fas fa-trash"></i> Delete</button>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <script src="js/dashboard.js"></script>
+    <script src="js/upload.js"></script>
+    <script src="js/chart.js"></script>
+</body>
+</html>
+

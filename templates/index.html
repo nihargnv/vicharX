@@ -1,0 +1,297 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard - Document Management System</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <style>
+      /* General Styles */
+      body {
+        font-family: Arial, sans-serif;
+      }
+
+      .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px;
+        background: #f4f4f4;
+      }
+
+      .view-options button {
+        border: none;
+        background: none;
+        cursor: pointer;
+        font-size: 18px;
+        padding: 5px 10px;
+      }
+
+      .view-options .active {
+        color: blue;
+      }
+
+      /* Grid View */
+      .document-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 15px;
+        padding: 20px;
+      }
+
+      .document {
+        border: 1px solid #ddd;
+        padding: 10px;
+        text-align: center;
+        background: white;
+        border-radius: 5px;
+      }
+
+      .document img {
+        width: 100%;
+        height: auto;
+        transition: transform 0.3s ease;
+        
+      }
+      .document-preview{
+        background-color: #fff;
+      }
+      .img-sccale{
+        scale: 0.65;
+      }
+
+      .img-sccale:hover{
+        scale: 0.55;
+      }
+
+      /* Zoom-out Effect */
+      .document img:hover {
+        transform: scale(0.9);
+      }
+
+      /* List View */
+      .list-view {
+        display: block;
+      }
+
+      .list-view .document {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 10px;
+      }
+
+      .list-view .document img {
+        width: 80px; /* Smaller images in list view */
+        height: auto;
+      }
+      .profile-image{
+        scale: 0.75;
+      }
+      
+      /* Document Tile Styles */
+      .documents-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 20px;
+        padding: 20px;
+      }
+      
+      .document-tile {
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        overflow: hidden;
+        background: white;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        transition: transform 0.2s;
+      }
+      
+      .document-tile:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      }
+      
+      .document-info {
+        padding: 10px;
+      }
+      
+      .document-name {
+        margin: 5px 0;
+        font-size: 14px;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+      }
+      
+      .document-actions {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px;
+        border-top: 1px solid #eee;
+      }
+      
+      .btn-details {
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 12px;
+        transition: background-color 0.3s;
+      }
+      
+      .btn-details:hover {
+        background-color: #45a049;
+      }
+      
+      /* List View Adjustments */
+      .list-view .document-tile {
+        display: grid;
+        grid-template-columns: 80px 1fr auto;
+        align-items: center;
+      }
+      
+      .list-view .document-preview {
+        width: 80px;
+      }
+      
+      .list-view .document-actions {
+        border-top: none;
+        padding-right: 20px;
+      }
+    </style>
+  </head>
+  <body class="dashboard-page">
+    <header class="dashboard-header">
+      <div class="header-left">
+        <button id="sidebar-toggle" class="sidebar-toggle">
+          <i class="fas fa-bars"></i>
+        </button>
+        <h1>VicharX- AI Doc Manager</h1>
+      </div>
+      <div class="header-right">
+        
+        <div class="user-profile">
+          <img
+            src="{% static '/public/profile_img.png' %}"
+            alt="User Profile"
+            class="profile-image"
+          />
+          <div class="dropdown">
+            <span class="username">John Doe</span>
+            <div class="dropdown-content">
+              <a href="#"><i class="fas fa-user"></i> Profile</a>
+              <a href="#"><i class="fas fa-cog"></i> Settings</a>
+              <a href="login.html"
+                ><i class="fas fa-sign-out-alt"></i> Logout</a
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="dashboard-container">
+      <aside class="sidebar">
+        <nav class="sidebar-nav">
+          <ul>
+            <li class="nav-item active" data-section="documents">
+              <a href="/"
+                ><i class="fas fa-file-alt"></i> <span>Documents</span></a
+              >
+            </li>
+            <li class="nav-item" data-section="upload">
+              <a href="/upload"
+                ><i class="fas fa-upload"></i> <span>Upload</span></a
+              >
+            </li>
+            <li class="nav-item" data-section="analytics">
+              <a href="/analytics"
+                ><i class="fas fa-chart-pie"></i> <span>Analytics</span></a
+              >
+            </li>
+            <li class="nav-item" data-section="settings">
+              <a href="/search"><i class="fas fa-search"></i> <span>Search</span></a>
+            </li>
+          </ul>
+        </nav>
+      </aside>
+
+      <main class="main-content">
+        <!-- Documents Section -->
+        <section id="documents" class="content-section active">
+          <div class="section-header">
+            <h2>My Documents</h2>
+            <div class="view-options">
+              <button class="view-btn active" data-view="grid">
+                <i class="fas fa-th"></i>
+              </button>
+              <button class="view-btn" data-view="list">
+                <i class="fas fa-list"></i>
+              </button>
+            </div>
+          </div>
+          <div id="documentContainer" class="documents-container grid-view">
+            <!-- Document tiles will be dynamically added here -->
+            {% for doc in documents %}
+            <div class="document-tile" data-id="{{ doc.id }}">
+              <div class="document-preview">
+                <a href="{{doc.file.url}}" target="_blank">
+                  <img
+                    src="{% static '/public/images.png' %}"
+                    alt="{{ doc.file.name }}"
+                    class="img-sccale"
+                  />
+                </a>
+              </div>
+              <div class="document-info">
+                <h3 class="document-name">{{ doc.file.name }}</h3>
+                <span class="document-category {{ doc.category }}">
+                  {{ doc.category }}
+                </span>
+                <div class="document-tags">{{ doc.category }}</div>
+              </div>
+              <div class="document-actions">
+                <a href="{% url 'document_details' doc.id %}" class="btn-details">
+                  <i class="fas fa-info-circle"></i> Details
+                </a>
+              </div>
+            </div>
+            {% empty %}
+            <p>No documents available.</p>
+            {% endfor %}
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script>
+        document.querySelectorAll('.view-btn').forEach(button => {
+            button.addEventListener('click', function () {
+                let view = this.getAttribute('data-view');
+                let container = document.getElementById('documentContainer');
+
+                // Remove active class from all buttons
+                document.querySelectorAll('.view-btn').forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+
+                // Toggle grid or list view
+                if (view === 'list') {
+                    container.classList.remove('grid-view');
+                    container.classList.add('list-view');
+                } else {
+                    container.classList.remove('list-view');
+                    container.classList.add('grid-view');
+                }
+            });
+        });
+    </script>
+  </body>
+</html>
