@@ -10,8 +10,8 @@ A **Django-based** web application for managing, searching, and analyzing docume
 - 🔍 **Smart Search** (Full-text, Keyword, Semantic)
 - 📊 **Analytics Dashboard**
 - 🗑️ **Delete & Organize Files**
-- 🌐 **Deployable on Google Cloud Platform (GCP)**
-
+- 🌐 **Deployed on Google Cloud Platform (GCP)**
+**- **for more details please view the intro video  -  https://youtu.be/KVLKekJYSkM ****
 
 ## **📁 Folder Structure**
 ```
@@ -68,6 +68,7 @@ Visit: **`http://127.0.0.1:8000/`** in your browser.
 6. Implemented Text Summarization model (PreTrained and Optimised AI Model from Transformers, HuggingFace).
 7. BART Classifier to classify the files based on the file content.
 8. Implemented Semantic search on the files.
+9. Deployed on GCP - http://34.35.9.73/
 
 
 
